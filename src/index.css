@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ocean: #1a4f5c;
+  --color-ocean-deep: #122f38;
+  --color-ocean-dark: #0b1f26;
+  --color-ocean-light: #3d7a8a;
+  --color-sand: #f7f4ef;
+  --color-sand-light: #fcfbf8;
+  --color-sand-dark: #e9e3d9;
+  --color-ivory: #fdfcfa;
+  --color-charcoal: #1a1a1a;
+  --color-warm-gray: #6b635a;
+  --color-gold: #c9a96e;
+  --color-gold-light: #dfc99a;
+  --color-aqua: #3ec4d4;
+  --color-aqua-dark: #1a7080;
+  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    margin: 0;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: var(--color-charcoal);
+    letter-spacing: -0.01em;
+  }
+}
+
+@keyframes wave {
+  0%, 100% {
+    transform: translateX(0) translateY(0);
+  }
+  50% {
+    transform: translateX(-25px) translateY(5px);
+  }
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
