@@ -3,6 +3,7 @@ import ponchoBlue from '../assets/poncho/bommie-blue.png'
 import ponchoDark from '../assets/poncho/bommie-dark.png'
 import ponchoRed from '../assets/poncho/bommie-red.png'
 import { Reveal, Topo } from './Art'
+import InterestModal from './InterestModal'
 
 const BASE_PRICE = 89
 // Embroidered initials are built but hidden for now; flip to true to bring them back
@@ -37,6 +38,7 @@ export default function ProductConfigurator() {
   const [sizeId, setSizeId] = useState(sizes[1].id)
   const [addInitials, setAddInitials] = useState(false)
   const [initials, setInitials] = useState('')
+  const [interestOpen, setInterestOpen] = useState(false)
 
   const colour = colours.find((c) => c.id === colourId)
   const size = sizes.find((s) => s.id === sizeId)
@@ -200,15 +202,18 @@ export default function ProductConfigurator() {
             <p className="text-sm text-driftwood-light mb-4">
               Your pick: <span className="text-driftwood font-semibold">{summary}</span>
             </p>
-            <a
-              href="#contact"
-              className="flex items-center justify-between gap-3 bg-driftwood text-sand pl-8 pr-3 py-3 rounded-full text-base font-semibold hover:bg-sunset-dark transition-colors group max-w-md"
+            <button
+              type="button"
+              onClick={() => setInterestOpen(true)}
+              aria-haspopup="dialog"
+              className="w-full flex items-center justify-between gap-3 bg-driftwood text-sand pl-8 pr-3 py-3 rounded-full text-base font-semibold hover:bg-sunset-dark transition-colors group max-w-md"
             >
               Register interest · ${price}
               <span className="w-10 h-10 rounded-full bg-sand text-driftwood flex items-center justify-center group-hover:-rotate-45 transition-transform duration-300">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </span>
-            </a>
+            </button>
+            <InterestModal open={interestOpen} onClose={() => setInterestOpen(false)} details={`${summary} · $${price}`} />
             <p className="font-hand text-xl text-sunset-dark mt-3">first drop: 10% off for early sign-ups</p>
           </div>
 

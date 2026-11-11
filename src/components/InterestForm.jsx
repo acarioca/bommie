@@ -1,13 +1,7 @@
 import { useState } from 'react'
+import { INBOX as INTEREST_INBOX, sendToInbox } from '../lib/formsubmit'
 
-/*
-  Register-interest form: one email field. Submissions are relayed by FormSubmit
-  (no backend needed) and arrive as an email at INTEREST_INBOX.
-  The very first submission triggers a one-time activation email to that inbox;
-  click the link in it and every submission after that is delivered.
-*/
-const INTEREST_INBOX = 'hello@bommienoosa.com'
-const ENDPOINT = `https://formsubmit.co/ajax/${INTEREST_INBOX}`
+/* Register-interest form: one email field, delivered to the Bommie inbox (see lib/formsubmit). */
 
 const STYLES = {
   light: {
@@ -26,7 +20,7 @@ const STYLES = {
   },
 }
 
-export default function InterestForm({ variant = 'dark', source, details, buttonLabel = 'I’m interested', className = '' }) {
+export default function InterestForm({ variant = 'dark', source, details, buttonLabel = 'I’m interested', className = '', autoFocus = false }) {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState('idle') // idle | sending | done | error
   const s = STYLES[variant]
@@ -38,19 +32,12 @@ export default function InterestForm({ variant = 'dark', source, details, button
     if (honey) return // bots fill the hidden field; silently ignore
     setStatus('sending')
     try {
-      const res = await fetch(ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-        body: JSON.stringify({
-          email,
-          _subject: 'New Bommie interest',
-          _template: 'table',
-          ...(source ? { 'Signed up from': source } : {}),
-          ...(details ? { 'Their pick': details } : {}),
-        }),
+      await sendToInbox({
+        email,
+        _subject: 'New Bommie interest',
+        ...(source ? { 'Signed up from': source } : {}),
+        ...(details ? { 'Their pick': details } : {}),
       })
-      const data = await res.json().catch(() => ({}))
-      if (!res.ok || String(data.success) !== 'true') throw new Error(data.message || 'Request failed')
       setStatus('done')
     } catch {
       setStatus('error')
@@ -80,6 +67,7 @@ export default function InterestForm({ variant = 'dark', source, details, button
           name="email"
           required
           autoComplete="email"
+          autoFocus={autoFocus}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Your email address"

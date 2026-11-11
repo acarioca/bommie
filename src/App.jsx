@@ -4,6 +4,7 @@ import {
   Reveal,
   Topo,
 } from './components/Art'
+import ContactView from './components/ContactView'
 import FeatureStory from './components/FeatureStory'
 import Hero from './components/Hero'
 import InstagramGrid from './components/InstagramGrid'
@@ -15,7 +16,7 @@ import './App.css'
 const navLinks = [
   { href: '#collection', label: 'The poncho' },
   { href: '#about', label: 'Our story' },
-  { href: '#contact', label: 'Contact' },
+  { href: '#get-in-touch', label: 'Contact' },
 ]
 
 // Ribbon: the poncho's features, all taken from the product copy
@@ -64,6 +65,26 @@ function Eyebrow({ children, light = false, className = '' }) {
 function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  // Contact opens as a view over the page; links to #get-in-touch (or that URL hash) open it
+  const [contactOpen, setContactOpen] = useState(false)
+  const openContact = (e) => {
+    e?.preventDefault()
+    setMobileMenuOpen(false)
+    setContactOpen(true)
+  }
+  useEffect(() => {
+    const fromHash = () => {
+      if (window.location.hash === '#get-in-touch') {
+        setContactOpen(true)
+        history.replaceState(null, '', window.location.pathname + window.location.search)
+      }
+    }
+    fromHash()
+    window.addEventListener('hashchange', fromHash)
+    return () => window.removeEventListener('hashchange', fromHash)
+  }, [])
+  const linkProps = (href) => (href === '#get-in-touch' ? { onClick: openContact, 'aria-haspopup': 'dialog' } : {})
+
   // Keep the nav out of the way until the hero has scrolled past
   const [navVisible, setNavVisible] = useState(false)
   useEffect(() => {
@@ -85,7 +106,7 @@ function App() {
       {/* Navigation */}
       <nav
         inert={!navVisible}
-        className={`fixed top-0 left-0 right-0 z-50 bg-sand/85 backdrop-blur-md border-b border-sand-dark/60 transition-[translate,opacity] duration-500 ease-out ${
+        className={`nav-wave fixed top-0 left-0 right-0 z-50 bg-sand/95 backdrop-blur-md transition-[translate,opacity] duration-500 ease-out ${
           navVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'
         }`}
       >
@@ -96,7 +117,7 @@ function App() {
             </a>
             <div className="hidden md:flex items-center gap-8">
               {navLinks.map((link) => (
-                <a key={link.href} href={link.href} className="relative text-[15px] font-medium text-driftwood-light hover:text-driftwood transition-colors after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-sunset after:rounded-full after:transition-all hover:after:w-full">
+                <a key={link.href} href={link.href} {...linkProps(link.href)} className="relative text-[15px] font-medium text-driftwood-light hover:text-driftwood transition-colors after:absolute after:left-0 after:-bottom-1 after:h-0.5 after:w-0 after:bg-sunset after:rounded-full after:transition-all hover:after:w-full">
                   {link.label}
                 </a>
               ))}
@@ -123,7 +144,7 @@ function App() {
         {mobileMenuOpen && (
           <div className="md:hidden bg-sand border-t border-sand-dark/60 px-6 py-6 space-y-4">
             {navLinks.map((link) => (
-              <a key={link.href} href={link.href} className="block text-base font-medium text-driftwood-light" onClick={() => setMobileMenuOpen(false)}>
+              <a key={link.href} href={link.href} className="block text-base font-medium text-driftwood-light" onClick={() => setMobileMenuOpen(false)} {...linkProps(link.href)}>
                 {link.label}
               </a>
             ))}
@@ -178,41 +199,28 @@ function App() {
       {/* Footer */}
       <footer className="relative bg-ocean-dark border-t border-sand/10 pt-16 px-6 lg:px-8 overflow-hidden">
         <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-12 mb-14">
-            <div className="md:col-span-2">
+          <div className="grid md:grid-cols-2 gap-12 mb-14">
+            <div>
               <p className="mb-3"><Wordmark light /></p>
               <p className="text-sand/60 text-base leading-relaxed max-w-sm">
                 Surf gear made on the Australian coast. Designed for surfers, by surfers.
               </p>
             </div>
-            <div>
-              <h4 className="font-display text-sand text-lg font-medium mb-5">Shop</h4>
-              <ul className="space-y-3">
+            <nav aria-label="Footer" className="md:justify-self-end">
+              <h4 className="font-display text-sand text-lg font-medium mb-5">Explore</h4>
+              <ul className="grid grid-cols-2 gap-x-10 gap-y-3">
                 <li><a href="#collection" className="text-sand/60 hover:text-seaglass transition-colors">The poncho</a></li>
-                <li><a href="#" className="text-sand/60 hover:text-seaglass transition-colors">Ponchos</a></li>
-                <li><a href="#" className="text-sand/60 hover:text-seaglass transition-colors">Accessories</a></li>
+                <li><a href="#about" className="text-sand/60 hover:text-seaglass transition-colors">Our story</a></li>
+                <li><a href="#contact" className="text-sand/60 hover:text-seaglass transition-colors">Register interest</a></li>
+                <li><a href="#get-in-touch" {...linkProps('#get-in-touch')} className="text-sand/60 hover:text-seaglass transition-colors">Contact</a></li>
               </ul>
-            </div>
-            <div>
-              <h4 className="font-display text-sand text-lg font-medium mb-5">Company</h4>
-              <ul className="space-y-3">
-                <li><a href="#about" className="text-sand/60 hover:text-seaglass transition-colors">About us</a></li>
-                <li><a href="#" className="text-sand/60 hover:text-seaglass transition-colors">Sustainability</a></li>
-                <li><a href="#contact" className="text-sand/60 hover:text-seaglass transition-colors">Contact</a></li>
-              </ul>
-            </div>
+            </nav>
           </div>
           <div className="border-t border-sand/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <p className="text-sand/50 text-sm">&copy; 2026 Bommie Surf Co. All rights reserved.</p>
             <div className="flex gap-6">
               <a href="https://www.instagram.com/bommienoosa/" target="_blank" rel="noopener noreferrer" aria-label="Bommie on Instagram" className="text-sand/50 hover:text-seaglass transition-colors">
                 <svg className="w-5 h-5" aria-hidden="true" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-              </a>
-              <a href="#" aria-label="X" className="text-sand/50 hover:text-seaglass transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
-              </a>
-              <a href="#" aria-label="Facebook" className="text-sand/50 hover:text-seaglass transition-colors">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/></svg>
               </a>
             </div>
           </div>
@@ -222,6 +230,8 @@ function App() {
           bommie
         </p>
       </footer>
+
+      <ContactView open={contactOpen} onClose={() => setContactOpen(false)} />
     </div>
   )
 }
