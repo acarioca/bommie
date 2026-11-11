@@ -5,7 +5,8 @@ import reactRefresh from 'eslint-plugin-react-refresh'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  // src/assets/instagram/*_files: a saved Instagram page used as a photo source, not our code
+  globalIgnores(['dist', 'src/assets/instagram/*_files']),
   {
     files: ['**/*.{js,jsx}'],
     extends: [

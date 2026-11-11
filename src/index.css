@@ -1,22 +1,35 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ocean: #1a4f5c;
-  --color-ocean-deep: #122f38;
-  --color-ocean-dark: #0b1f26;
-  --color-ocean-light: #3d7a8a;
-  --color-sand: #f7f4ef;
-  --color-sand-light: #fcfbf8;
-  --color-sand-dark: #e9e3d9;
-  --color-ivory: #fdfcfa;
-  --color-charcoal: #1a1a1a;
-  --color-warm-gray: #6b635a;
-  --color-gold: #c9a96e;
-  --color-gold-light: #dfc99a;
-  --color-aqua: #3ec4d4;
-  --color-aqua-dark: #1a7080;
-  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
-  --font-display: 'Cormorant Garamond', Georgia, serif;
+  /* Sea */
+  --color-ocean: #1f5662;
+  --color-ocean-deep: #17414b;
+  --color-ocean-dark: #0f2e36;
+  --color-ocean-light: #4a8592;
+
+  /* Shore */
+  --color-sand: #f3ebdd;
+  --color-sand-light: #f9f4ea;
+  --color-sand-dark: #e6d8c1;
+  --color-driftwood: #3b2f26;
+  --color-driftwood-light: #75644f;
+
+  /* Accents */
+  --color-seaglass: #8fb9a8;
+  --color-seaglass-dark: #4f7f6d;
+  --color-sunset: #d9774b;
+  --color-sunset-dark: #b0552d;
+
+  --font-sans: 'Figtree', system-ui, -apple-system, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-hand: 'Caveat', 'Bradley Hand', cursive;
+  /* Logo: matches the geometric sans printed on the poncho */
+  --font-logo: 'DM Sans', system-ui, -apple-system, sans-serif;
+}
+
+/* Fraunces' SOFT axis rounds off the serifs for a warmer, surf-shop feel */
+.font-display {
+  font-variation-settings: "SOFT" 100;
 }
 
 @layer base {
@@ -28,17 +41,20 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    color: var(--color-charcoal);
-    letter-spacing: -0.01em;
+    color: var(--color-driftwood);
+    background-color: var(--color-sand);
   }
-}
 
-@keyframes wave {
-  0%, 100% {
-    transform: translateX(0) translateY(0);
-  }
-  50% {
-    transform: translateX(-25px) translateY(5px);
+  /* Subtle paper grain across the whole page */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    pointer-events: none;
+    opacity: 0.07;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.23 0 0 0 0 0.18 0 0 0 0 0.15 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 }
 
@@ -51,4 +67,51 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+
+
+
+
+::selection {
+  background: var(--color-sunset);
+  color: var(--color-sand-light);
+}
+
+/* Scroll-reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1), transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Outlined display numerals */
+.text-outline {
+  -webkit-text-fill-color: transparent;
+  -webkit-text-stroke: 1.5px currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { opacity: 1; transform: none; transition: none; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Hero scroll cue */
+@keyframes scrollcue {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(200%); }
+}
+
+/* Horizontal variant of the scroll cue (phones) */
+@keyframes scrollcue-x {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
 }

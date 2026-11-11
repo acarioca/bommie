@@ -1,0 +1,4 @@
+;/*FB_PKG_DELIM*/
+
+__d("IGDOmniPickerDialog.entrypoint",["IGDOmniPickerNullStateListQuery$Parameters","JSResourceForInteraction"],(function(t,n,r,o,a,i,l){"use strict";var e={getPreloadProps:function(t){return{queries:{nullStateQueryRef:{parameters:r("IGDOmniPickerNullStateListQuery$Parameters"),variables:{input:{count_per_page:20,is_private_share:!1,views:["DIRECT_USER_SEARCH_NULLSTATE"]}}}}}},root:r("JSResourceForInteraction")("IGDOmniPickerDialogRoot.react").__setRef("IGDOmniPickerDialog.entrypoint")};l.default=e}),98);
+__d("useIGDCreateOptimisticThreadUserQuery$Parameters",["useIGDCreateOptimisticThreadUserQuery_instagramRelayOperation"],(function(t,n,r,o,a,i){"use strict";var e={kind:"PreloadableConcreteRequest",params:{id:n("useIGDCreateOptimisticThreadUserQuery_instagramRelayOperation"),metadata:{is_fully_www_executable:!0},name:"useIGDCreateOptimisticThreadUserQuery",operationKind:"query",text:null}};a.exports=e}),null);
