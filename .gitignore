@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local environment (contains secrets such as the Stripe secret key)
+.env
+.env.*
+!.env.example

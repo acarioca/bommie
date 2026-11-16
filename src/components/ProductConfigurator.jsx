@@ -16,8 +16,28 @@ const colours = [
   { id: 'crimson', name: 'Crimson', img: ponchoRed, swatch: 'bg-[#c4161c]', tint: 'bg-[#f3d5c2]', note: 'sunset session' },
 ]
 
-// Placeholder sizes: confirm the real size range before launch
+/*
+  Stripe Payment Links, one per colour + size. The URLs live in .env
+  (STRIPE_PAYMENT_LINK_<COLOUR>_<SIZE>) and must also be set on the host when deploying.
+  A combination without a link falls back to the register-interest pop-up,
+  so the page never shows a dead Buy button.
+*/
+const env = import.meta.env
+const BUY_LINKS = {
+  'ocean-kids': env.STRIPE_PAYMENT_LINK_OCEANBLUE_KIDS,
+  'ocean-sm': env.STRIPE_PAYMENT_LINK_OCEANBLUE_SM,
+  'ocean-lxl': env.STRIPE_PAYMENT_LINK_OCEANBLUE_XL,
+  'midnight-kids': env.STRIPE_PAYMENT_LINK_MIDNIGHT_KIDS,
+  'midnight-sm': env.STRIPE_PAYMENT_LINK_MIDNIGHT_SM,
+  'midnight-lxl': env.STRIPE_PAYMENT_LINK_MIDNIGHT_XL,
+  'crimson-kids': env.STRIPE_PAYMENT_LINK_CRIMSON_KIDS,
+  'crimson-sm': env.STRIPE_PAYMENT_LINK_CRIMSON_SM,
+  'crimson-lxl': env.STRIPE_PAYMENT_LINK_CRIMSON_XL,
+}
+
+// Sizes match the Stripe links. The fit guides are placeholders: confirm before launch
 const sizes = [
+  { id: 'kids', label: 'Kids', fit: 'For the groms' },
   { id: 'sm', label: 'S / M', fit: 'Up to 175 cm' },
   { id: 'lxl', label: 'L / XL', fit: '175 cm and up' },
 ]
@@ -35,7 +55,7 @@ function OptionLabel({ children, value }) {
 
 export default function ProductConfigurator() {
   const [colourId, setColourId] = useState(colours[0].id)
-  const [sizeId, setSizeId] = useState(sizes[1].id)
+  const [sizeId, setSizeId] = useState('lxl')
   const [addInitials, setAddInitials] = useState(false)
   const [initials, setInitials] = useState('')
   const [interestOpen, setInterestOpen] = useState(false)
@@ -46,6 +66,7 @@ export default function ProductConfigurator() {
   const price = BASE_PRICE + (addInitials ? INITIALS_PRICE : 0)
 
   const summary = [colour.name, size.label, showInitials ? `initials “${initials}”` : null].filter(Boolean).join(' · ')
+  const buyLink = BUY_LINKS[`${colour.id}-${size.id}`]
 
   return (
     <section id="collection" className="pt-24 md:pt-28 pb-28 px-6 lg:px-8 max-w-7xl mx-auto">
@@ -139,7 +160,7 @@ export default function ProductConfigurator() {
             <fieldset>
               <legend className="sr-only">Size</legend>
               <OptionLabel value={size.fit}>Size</OptionLabel>
-              <div className="grid grid-cols-2 gap-3 max-w-sm" role="radiogroup" aria-label="Size">
+              <div className="grid grid-cols-3 gap-2 sm:gap-3 max-w-md" role="radiogroup" aria-label="Size">
                 {sizes.map((s) => (
                   <button
                     key={s.id}
@@ -202,6 +223,23 @@ export default function ProductConfigurator() {
             <p className="text-sm text-driftwood-light mb-4">
               Your pick: <span className="text-driftwood font-semibold">{summary}</span>
             </p>
+            {buyLink ? (
+              <>
+                <a
+                  href={buyLink}
+                  className="w-full flex items-center justify-between gap-3 bg-driftwood text-sand pl-8 pr-3 py-3 rounded-full text-base font-semibold hover:bg-ocean transition-colors group max-w-md"
+                >
+                  Buy now · ${price}
+                  <span className="w-10 h-10 rounded-full bg-sand text-driftwood flex items-center justify-center group-hover:-rotate-45 transition-transform duration-300">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                  </span>
+                </a>
+                <p className="mt-3 flex items-center gap-2 text-sm text-driftwood-light">
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 10-8 0v4M5 11h14v10H5z" /></svg>
+                  Secure checkout with Stripe · Apple Pay &amp; Google Pay
+                </p>
+              </>
+            ) : (
             <button
               type="button"
               onClick={() => setInterestOpen(true)}
@@ -213,8 +251,13 @@ export default function ProductConfigurator() {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
               </span>
             </button>
-            <InterestModal open={interestOpen} onClose={() => setInterestOpen(false)} details={`${summary} · $${price}`} />
-            <p className="font-hand text-xl text-sunset-dark mt-3">first drop: 10% off for early sign-ups</p>
+            )}
+            {!buyLink && (
+              <>
+                <InterestModal open={interestOpen} onClose={() => setInterestOpen(false)} details={`${summary} · $${price}`} />
+                <p className="font-hand text-xl text-sunset-dark mt-3">first drop: 10% off for early sign-ups</p>
+              </>
+            )}
           </div>
 
           <ul className="mt-10 grid sm:grid-cols-2 gap-x-6 gap-y-3">
