@@ -5,7 +5,7 @@ import ponchoRed from '../assets/poncho/bommie-red.png'
 import { Reveal, Topo } from './Art'
 import InterestModal from './InterestModal'
 
-const BASE_PRICE = 89
+const BASE_PRICE = 98
 // Embroidered initials are built but hidden for now; flip to true to bring them back
 const INITIALS_ENABLED = false
 const INITIALS_PRICE = 10 // placeholder: confirm real personalisation price
